@@ -1,8 +1,9 @@
-#pragma once
+#ifndef STORY_H
+#define STORY_H
 
+#include <iostream>
 #include <vector>
 #include <unordered_map>
-#include "StoryTokenizer.h"
 #include "Passage.h"
 
 using namespace std;
@@ -17,3 +18,15 @@ public:
 	Story();
 	void startProgram();
 };
+
+class StoryTokenizer /* Takes in story text, creates passage tokens */{
+private:
+	string storyText;
+	int index;
+public:
+	StoryTokenizer(string s);
+	bool hasNextPassage();
+	PassageToken nextPassage();
+};
+
+#endif

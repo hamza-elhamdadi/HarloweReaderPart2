@@ -4,3 +4,8 @@ Section::Section(SectionToken st)
 {
 
 }
+
+SectionToken::SectionToken(string s)
+{
+
+}
