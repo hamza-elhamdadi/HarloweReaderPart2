@@ -18,47 +18,47 @@ public:
 	type_t getType() const { return type; };
 };
 
-class Link : SectionToken::SectionToken
+class Link : public SectionToken
 {
 
 };
 
-class Command : SectionToken::SectionToken
+class Command : public SectionToken
 {
 
 };
 
-class Block : SectionToken::SectionToken
+class Block : public SectionToken
 {
 
 };
 
-class Text : SectionToken::SectionToken
+class Text : public SectionToken
 {
 
 };
 
-class Goto : SectionToken::SectionToken
+class Goto : public SectionToken
 {
 
 };
 
-class Set : SectionToken::SectionToken
+class Set : public SectionToken
 {
 
 };
 
-class If : SectionToken::SectionToken
+class If : public SectionToken
 {
 
 };
 
-class Elseif : SectionToken::SectionToken
+class Elseif : public SectionToken
 {
 
 };
 
-class Else : SectionToken::SectionToken
+class Else : public SectionToken
 {
 
 };
