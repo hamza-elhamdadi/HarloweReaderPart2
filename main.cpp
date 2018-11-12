@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "StoryTokenizer.h"
+#include "Story.h"
 
 using namespace std;
 
