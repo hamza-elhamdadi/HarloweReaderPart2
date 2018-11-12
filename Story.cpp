@@ -1,21 +1,39 @@
 #include "Story.h"
 
-Story::Story()
+bool StoryTokenizer::hasNextPassage(string& storyText, vector<Passage*>& passages)
 {
-
+	if (storyText.find("<tw-passagedata ", index) == string::npos) {
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
-StoryTokenizer::StoryTokenizer(string s)
+void StoryTokenizer::nextPassage(string& storyText, vector<Passage*>& passages)
 {
-	index = 0;
+	int passageBeginning;
+
+	passageBeginning = storyText.find("<tw-passagedata ", index);
+	index = storyText.find("</tw-passagedata>", passageBeginning) + 17;
+
+	PassageToken ptok(storyText.substr(passageBeginning, index - passageBeginning));
+	Passage p(ptok);
+
+	passages.push_back(&p);
 }
 
-bool hasNextPassage()
+Story::Story(string text)
 {
-
+	storyText = text;
 }
 
-PassageToken nextPassage()
+//starts the program
+void Story::startProgram()
 {
-
+	StoryTokenizer storyTok();
+	while(storyTok.hasNextPassage())
+	{
+		storyTok.nextPassage();
+	}
 }

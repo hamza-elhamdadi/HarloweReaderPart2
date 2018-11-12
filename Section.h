@@ -18,58 +18,63 @@ public:
 	type_t getType() const { return type; };
 };
 
-class Link : public SectionToken
-{
-
-};
-
-class Command : public SectionToken
-{
-
-};
-
-class Block : public SectionToken
-{
-
-};
-
-class Text : public SectionToken
-{
-
-};
-
-class Goto : public SectionToken
-{
-
-};
-
-class Set : public SectionToken
-{
-
-};
-
-class If : public SectionToken
-{
-
-};
-
-class Elseif : public SectionToken
-{
-
-};
-
-class Else : public SectionToken
-{
-
-};
-
 class Section
 {
 protected:
 	string text;
 public:
-	Section(SectionToken st);
+	Section(SectionToken& st);
 	string getText() const { return text; };
 };
+
+class Link : public Section
+{
+private:
+public:
+
+};
+
+class Block : public Section
+{
+private:
+public:
+};
+
+class Text : public Section
+{
+private:
+public:
+};
+
+class Goto : public Section
+{
+private:
+public:
+};
+
+class Set : public Section
+{
+private:
+public:
+};
+
+class If : public Section
+{
+private:
+public:
+};
+
+class Elseif : public Section
+{
+private:
+public:
+};
+
+class Else : public Section
+{
+private:
+public:
+};
+
 
 #endif
