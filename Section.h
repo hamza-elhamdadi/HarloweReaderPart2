@@ -5,8 +5,6 @@
 
 using namespace std;
 
-enum type_t { LINK, COMMAND, BLOCK, TEXT, GOTO, SET, IF, ELSEIF, ELSE };
-
 class SectionToken
 {
 protected:
