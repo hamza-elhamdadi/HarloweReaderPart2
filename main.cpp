@@ -1,25 +1,16 @@
-#include <iostream>
-#include <string>
 #include "Story.h"
-
-using namespace std;
 
 int main()
 {
-	string line, story;
+  string s;
+  Story st(s);
 
-	getline(cin, line);
-	while (cin && line != "</html>")
-	{
-		story += line + '\n';
-		getline(cin, line);
-	}
+  StoryTokenizer storyTok;
+  while(storyTok.hasNextPassage(st))
+  {
+    storyTok.nextPassage(st);
+  }
 
-	StoryTokenizer st(story);
-	while (st.hasNextPassage())
-	{
 
-	}
 
-	return 0;
 }

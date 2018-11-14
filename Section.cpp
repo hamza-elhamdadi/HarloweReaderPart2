@@ -1,51 +1,51 @@
 #include "Section.h"
 
-Section::Section(SectionToken st)
+SectionToken::SectionToken(string& s)
 {
-  //remember there can be invalid sections
+  sectionText = s;
 }
 
-SectionToken::SectionToken(string s)
-{
-
-}
-
-Link::Link(SectionToken stok) : Section(SectionToken)
+Section::Section(SectionToken& st)
 {
 
 }
 
-Goto::Goto(SectionToken stok) : Section(SectionToken)
+Link::Link(SectionToken& stok) : Section(stok)
 {
 
 }
 
-if::If(SectionToken stok) : Section(SectionToken)
+Goto::Goto(SectionToken& stok) : Section(stok)
 {
 
 }
 
-Elseif::Elseif(SectionToken stok) : Section(SectionToken)
+if::If(SectionToken& stok) : Section(stok)
 {
 
 }
 
-Else::Else(SectionToken stok) : Section(SectionToken)
+Elseif::Elseif(SectionToken& stok) : Section(stok)
 {
 
 }
 
-Set::Set(SectionToken stok) : Section(SectionToken)
+Else::Else(SectionToken& stok) : Section(stok)
 {
 
 }
 
-Text::Text(SectionToken stok) : Section(stok.getText())
+Set::Set(SectionToken& stok) : Section(stok)
 {
 
 }
 
-Block::Block(SectionToken stok) : Section(stok.getText())
+Text::Text(SectionToken& stok) : Section(stok)
+{
+
+}
+
+Block::Block(SectionToken& stok) : Section(stok)
 {
 
 }

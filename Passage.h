@@ -12,27 +12,26 @@ private:
 	string passageText;
 public:
 	PassageToken(string s);
-	string getText();
+	string getText() const{ return passageText; };
 };
 
 class Passage {
+	friend class PassageTokenizer;
 private:
 	string name;
 	vector<Section*> sections;
+	int ptIndex;
 public:
 	Passage(PassageToken& pt);
-	string getText() const { return passageText; };
 };
 
 class PassageTokenizer /* Creates sectiontokens */{
 private:
 	string passageText;
-	int ptIndex;
 public:
-	PassageTokenizer(string& passageText, vector<Section*>& sections);
-	bool hasNextSection(string& passageText, vector<Section*>& sections);
-	virtual SectionToken nextSection();
+	PassageTokenizer(string& passageText);
+	bool hasNextSection(Passage& pass);
+	void nextSection(Passage& pass);
 };
-
 
 #endif

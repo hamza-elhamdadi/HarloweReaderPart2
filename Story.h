@@ -17,8 +17,7 @@ private:
 	unordered_map<string, bool> variables;
 	unordered_map<string, int> lookUpPassage;
 public:
-	Story();
-	void startProgram();
+	Story(string s);
 };
 
 class StoryTokenizer /* Takes in story text, creates passage tokens */{
@@ -26,8 +25,8 @@ private:
 	int index;
 public:
 	StoryTokenizer();
-	bool hasNextPassage(string& storyText, vector<Passage*>& passages);
-	void nextPassage(string& storyText, vector<Passage*>& passages);
+	bool hasNextPassage(Story& theStory);
+	void nextPassage(Story& theStory);
 };
 
 #endif

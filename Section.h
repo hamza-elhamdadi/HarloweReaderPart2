@@ -11,11 +11,9 @@ class SectionToken
 {
 protected:
 	string sectionText;
-	type_t type;
 public:
-	SectionToken(string s);
+	SectionToken(string& s);
 	string getText() const { return sectionText; };
-	type_t getType() const { return type; };
 };
 
 class Section
