@@ -105,7 +105,7 @@ Elseif::Elseif(SectionToken& stok) : Section(stok)
   secIndex = stok.getText().find("$") + 1;
   type = ELSEIF;
   text = stok.getText().substr(secIndex, stok.getText().find(" is ", secIndex) - secIndex);
-
+  
   secIndex = stok.getText().find(" is ", secIndex) + 4;
   if(stok.getText().substr(secIndex, 4) == "true"){
     valueToCheck = true;

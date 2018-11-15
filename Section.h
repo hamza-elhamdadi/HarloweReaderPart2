@@ -74,7 +74,6 @@ class If : public Section
 {
 private:
 	bool valueToCheck;
-	Block* ifBlock;
 public:
 	If(SectionToken& stok);
 	bool getValueToCheck() const { return value; };
@@ -84,7 +83,6 @@ class Elseif : public Section
 {
 private:
 	bool valueToCheck;
-	Block* elseifBlock;
 public:
 	Elseif(SectionToken& stok);
 	bool getValueToCheck() const { return value; };
@@ -92,8 +90,6 @@ public:
 
 class Else : public Section
 {
-private:
-	Block* elseBlock;
 public:
 	Else(SectionToken& stok);
 };
