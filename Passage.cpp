@@ -10,7 +10,6 @@ Passage::Passage(PassageToken& pt)
   string passageText = pt.getText();
   PassageTokenizer ptkzr(passageText);
 
-
   while(ptkzr.hasNextSection(*this))
   {
     ptkzr.nextSection(*this);
@@ -59,7 +58,12 @@ bool PassageTokenizer::hasNextSection(Passage& pass)
 void PassageTokenizer::nextSection(Passage& pass)
 {
   int sectionBeginning;
-  pass.ptIndex = passageText.find(">") + 1;
+  if(passageText.find(">") != string::npos){
+    pass.ptIndex = passageText.find(">") + 1;
+  }
+  else{
+    pass.ptIndex++;
+  }
 
   //test to see if the next section is a Text Section.
   if ((passageText.substr(pass.ptIndex, 1) != "(") && (passageText.substr(pass.ptIndex, 1) != "[")) {

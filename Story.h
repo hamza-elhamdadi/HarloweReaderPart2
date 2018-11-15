@@ -11,6 +11,8 @@ using namespace std;
 class Story
 {
 private:
+	friend class Section;
+	friend class Passage;
 	friend class StoryTokenizer;
 	string storyText;
 	vector<Passage*> passages;
@@ -18,6 +20,9 @@ private:
 	unordered_map<string, int> lookUpPassage;
 public:
 	Story(string s);
+	void addLookup(string& name, int& index);
+	void addVariable(string& varName, bool& value);
+	vector<Passage*> getPassage(int index){ return passage.at(index)};
 };
 
 class StoryTokenizer /* Takes in story text, creates passage tokens */{

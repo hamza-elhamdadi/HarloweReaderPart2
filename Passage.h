@@ -23,6 +23,8 @@ private:
 	int ptIndex;
 public:
 	Passage(PassageToken& pt);
+	string getName() const{ return name; };
+	vector<Section*> getSec() const{ return sections; };
 };
 
 class PassageTokenizer /* Creates sectiontokens */{
@@ -31,7 +33,7 @@ private:
 public:
 	PassageTokenizer(string& passageText);
 	bool hasNextSection(Passage& pass);
-	void nextSection(Passage& pass);
+	void nextSection(Passage& pass); // determines what type of section is next and then creates that section class and pushes it back to the vector of sections
 };
 
 #endif

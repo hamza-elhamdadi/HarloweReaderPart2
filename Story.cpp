@@ -1,6 +1,6 @@
 #include "Story.h"
 
-bool StoryTokenizer::hasNextPassage(Story& story)
+bool StoryTokenizer::hasNextPassage(Story& theStory)
 {
 	if (theStory.storyText.find("<tw-passagedata ", index) == string::npos) {
 		return false;
@@ -28,8 +28,12 @@ Story::Story(string text)
 	theStory.storyText = text;
 }
 
-//starts the program
-void Story::startProgram()
+void Story::addLookup(string& name, int& index)
 {
+	variables[name] = index;
+}
 
+void Story::addVariable(string& varName, bool& value)
+{
+	lookUpPassage[varName] = value;
 }
