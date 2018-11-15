@@ -21,6 +21,7 @@ class Section
 protected:
 	string text;
 	type_t type;
+	int secIndex;
 public:
 	Section(SectionToken& st);
 	string getText() const { return text; };
