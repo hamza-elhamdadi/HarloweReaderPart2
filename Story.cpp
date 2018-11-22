@@ -37,3 +37,8 @@ void Story::addVariable(string& varName, bool& value)
 {
 	lookUpPassage[varName] = value;
 }
+
+bool Story::getVarVal(string& varName) const
+{
+	return variables.at(varName);
+}

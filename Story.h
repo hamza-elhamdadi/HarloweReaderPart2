@@ -22,7 +22,8 @@ public:
 	Story(string s);
 	void addLookup(string& name, int& index);
 	void addVariable(string& varName, bool& value);
-	vector<Passage*> getPassage(int index){ return passage.at(index)};
+	bool getVarVal(string& varName) const;
+	vector<Passage*> getPassages(int index) const{ return passages};
 };
 
 class StoryTokenizer /* Takes in story text, creates passage tokens */{
