@@ -79,11 +79,11 @@ void Story::startPassage(int index)
     {
       addVariable(currentLinksText, passages.at(index).getSec().at(i).getValue());
     }
-    elseif(currentLinksType == TEXT)
+    else if(currentLinksType == TEXT)
     {
       cout << currentLinksText << endl;
     }
-    elseif(currentLinksType == LINK)
+    else if(currentLinksType == LINK)
     {
 			if(gotoExists == false)
 			{
@@ -93,7 +93,7 @@ void Story::startPassage(int index)
 	      listOfLinks.push_back(make_pair(currentLinksText, passName));
 			}
     }
-    elseif(currentLinksType == IF)
+    else if(currentLinksType == IF)
     {
       if(passages.at(index).getSec().at(i).getValueToCheck() == getVarVal(currentLinksText))
       {
@@ -104,7 +104,7 @@ void Story::startPassage(int index)
         i++;
       }
     }
-    elseif(currentLinksType == ELSEIF)
+    else if(currentLinksType == ELSEIF)
     {
       if(passages.at(index).getSec().at(i).getValueToCheck() == getVarVal(currentLinksText) && ifElseIfElse == true)
       {
@@ -115,7 +115,7 @@ void Story::startPassage(int index)
         i++;
       }
     }
-    elseif(currentLinksType == ELSE)
+    else if(currentLinksType == ELSE)
     {
       if(ifElseIfElse == false)
       {

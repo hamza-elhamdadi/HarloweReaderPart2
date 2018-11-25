@@ -5,7 +5,7 @@
 
 using namespace std;
 
-enum type_t {NULL, LINK, SET, GOTO, IF, ELSEIF, ELSE, TEXT, BLOCK};
+enum type_t {NULLTYPE, LINK, SET, GOTO, IF, ELSEIF, ELSE, TEXT, BLOCK};
 
 class SectionToken
 {

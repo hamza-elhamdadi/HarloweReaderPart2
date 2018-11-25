@@ -8,7 +8,7 @@ SectionToken::SectionToken(string& s)
 Section::Section(SectionToken& st)
 {
   text = st.getText();
-  type = NULL;
+  type = NULLTYPE;
 }
 
 Link::Link(SectionToken& stok) : Section(stok)
