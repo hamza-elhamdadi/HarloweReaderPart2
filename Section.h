@@ -9,6 +9,7 @@ enum type_t {NULL, LINK, SET, GOTO, IF, ELSEIF, ELSE, TEXT, BLOCK};
 
 class SectionToken
 {
+	friend class BlockTokenizer;
 protected:
 	string sectionText;
 public:
@@ -39,11 +40,12 @@ public:
 
 class Block : public Section
 {
-	friend class PassageTokenizer;
 private:
 	vector<Section*> blockSections;
+	int blIndex;
 public:
 	Block(SectionToken& stok);
+	void addSection(Section* blockSect) const;
 };
 
 class Text : public Section
@@ -94,5 +96,12 @@ public:
 	Else(SectionToken& stok);
 };
 
+class BlockTokenizer
+{
+public:
+	BlockTokenizer();
+	bool hasNextSection(Block& bl);
+	void nextSection(Block& bl);
+}
 
 #endif

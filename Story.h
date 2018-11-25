@@ -16,6 +16,7 @@ private:
 	friend class StoryTokenizer;
 	string storyText;
 	vector<Passage*> passages;
+	vector<pair<string, string>> listOfLinks;
 	unordered_map<string, bool> variables;
 	unordered_map<string, int> lookUpPassage;
 public:
@@ -23,7 +24,9 @@ public:
 	void addLookup(string& name, int& index);
 	void addVariable(string& varName, bool& value);
 	bool getVarVal(string& varName) const;
+	int lookup(string& passName) const;
 	vector<Passage*> getPassages(int index) const{ return passages};
+	void startPassage(int index);
 };
 
 class StoryTokenizer /* Takes in story text, creates passage tokens */{
