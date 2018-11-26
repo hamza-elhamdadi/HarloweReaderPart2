@@ -23,30 +23,42 @@ void StoryTokenizer::nextPassage(Story& theStory)
 	theStory.passages.push_back(&p);
 }
 
+
+
 Story::Story(string text)
 {
 	theStory.storyText = text;
 }
+
+
 
 void Story::addLookup(string& name, int& index)
 {
 	variables[name] = index;
 }
 
+
+
 void Story::addVariable(string& varName, bool& value)
 {
 	lookUpPassage[varName] = value;
 }
+
+
 
 bool Story::getVarVal(string& varName) const
 {
 	return variables.at(varName);
 }
 
+
+
 int Story::lookup(string& passName) const
 {
 	return lookUpPassage.at(passName);
 }
+
+
 
 void Story::startPassage(int index)
 {
@@ -62,6 +74,7 @@ void Story::startPassage(int index)
 			j = i;
 			gotoExists = true;
 			passName = passages.at(index).getSec().at(i).getPassName();
+			break;
 		}
 		else
 		{
@@ -71,31 +84,31 @@ void Story::startPassage(int index)
 
   for(int i = 0; i < j; i++)
   {
-    type_t currentLinksType = passages.at(index).getSec().at(i).getType();
-    string currentLinksText = passages.at(index).getSec().at(i).getText()
-    //We will eventually need to add a test case for when the passages.at(0).getSec().at(i) has type null
-    //We should probably use throw, try, and catch to fix the errors
-    if(currentLinksType == SET)
+    type_t currentType = passages.at(index).getSec().at(i).getType();
+    string currentText = passages.at(index).getSec().at(i).getText();
+
+
+    if(currentType == SET)
     {
-      addVariable(currentLinksText, passages.at(index).getSec().at(i).getValue());
+      addVariable(currentText, passages.at(index).getSec().at(i).getValue());
     }
-    else if(currentLinksType == TEXT)
+    else if(currentType == TEXT)
     {
-      cout << currentLinksText << endl;
+      cout << currentText << endl;
     }
-    else if(currentLinksType == LINK)
+    else if(currentType == LINK)
     {
 			if(gotoExists == false)
 			{
 				passName = passages.at(index).getSec().at(i).getPassName();
 
-	      cout << "\"" + currentLinksText + "\"" << endl;
-	      listOfLinks.push_back(make_pair(currentLinksText, passName));
+	      cout << "\"" + currentText + "\"" << endl;
+	      listOfLinks.push_back(make_pair(currentText, passName));
 			}
     }
-    else if(currentLinksType == IF)
+    else if(currentType == IF)
     {
-      if(passages.at(index).getSec().at(i).getValueToCheck() == getVarVal(currentLinksText))
+      if(passages.at(index).getSec().at(i).getValueToCheck() == getVarVal(currentText))
       {
         ifElseIfElse = false;
       }
@@ -104,9 +117,9 @@ void Story::startPassage(int index)
         i++;
       }
     }
-    else if(currentLinksType == ELSEIF)
+    else if(currentType == ELSEIF)
     {
-      if(passages.at(index).getSec().at(i).getValueToCheck() == getVarVal(currentLinksText) && ifElseIfElse == true)
+      if(passages.at(index).getSec().at(i).getValueToCheck() == getVarVal(currentText) && ifElseIfElse == true)
       {
         ifElseIfElse = false;
       }
@@ -115,7 +128,7 @@ void Story::startPassage(int index)
         i++;
       }
     }
-    else if(currentLinksType == ELSE)
+    else if(currentType == ELSE)
     {
       if(ifElseIfElse == false)
       {
@@ -124,8 +137,7 @@ void Story::startPassage(int index)
     }
     else
     {
-			//This is for blocks. The problem is we need to run through this startPassage function again for the block itself.
-			//i.e. check each of the sections in the vector blockSections just like we checked each of the sections in the passage
+			passages.at(index).getSec().at(i).startBlock(listOfLinks, j, gotoExists, passName);
     }
 
   }

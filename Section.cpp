@@ -45,9 +45,90 @@ Block::Block(SectionToken& stok) : Section(stok)
   }
 }
 
-void Block::addSection(Section* blockSect) const
+void Block::addSection(Section* blockSect)
 {
   blockSections.push_back(blockSect);
+}
+
+bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName)
+{
+  bool ifElseIfElse = true;
+
+  if(gotoExists == false)
+  {
+    for(int i = 0; i < blockSections.size(); i++)
+  	{
+  		if(blockSections.at(i).getType() == GOTO)
+  		{
+  			gotoIndex = i;
+  			gotoExists = true;
+  			passName = blockSections.at(i).getPassName();
+        break;
+  		}
+  		else
+  		{
+  			gotoIndex = blockSections.at(i).getType();
+  		}
+  	}
+  }
+
+  for(int i = 0; i < gotoIndex; i++)
+  {
+    type_t currentType = blockSections.at(i).getType();
+    string currentText = blockSections.at(i).getText();
+
+    if(currentType == SET)
+    {
+      addVariable(currentText, blockSections.at(i).getValue());
+    }
+    else if(currentType == TEXT)
+    {
+      cout << currentText << endl;
+    }
+    else if(currentType == LINK)
+    {
+			if(gotoExists == false)
+			{
+				passName = blockSections.at(i).getPassName();
+
+	      cout << "\"" + currentText + "\"" << endl;
+	      listOfLinks.push_back(make_pair(currentText, passName));
+			}
+    }
+    else if(currentType == IF)
+    {
+      if(blockSections.at(i).getValueToCheck() == getVarVal(currentText))
+      {
+        ifElseIfElse = false;
+      }
+      else
+      {
+        i++;
+      }
+    }
+    else if(currentType == ELSEIF)
+    {
+      if(blockSections.at(i).getValueToCheck() == getVarVal(currentText) && ifElseIfElse == true)
+      {
+        ifElseIfElse = false;
+      }
+      else
+      {
+        i++;
+      }
+    }
+    else if(currentType == ELSE)
+    {
+      if(ifElseIfElse == false)
+      {
+        i++;
+      }
+    }
+    else
+    {
+			blockSections.at(i).startBlock(listOfLinks, gotoIndex, gotoExists, passName);
+    }
+  }
 }
 
 Text::Text(SectionToken& stok) : Section(stok)

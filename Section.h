@@ -45,7 +45,8 @@ private:
 	int blIndex;
 public:
 	Block(SectionToken& stok);
-	void addSection(Section* blockSect) const;
+	void addSection(Section* blockSect);
+	void startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName);
 };
 
 class Text : public Section
