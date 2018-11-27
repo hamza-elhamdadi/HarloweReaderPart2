@@ -163,6 +163,7 @@ void BlockTokenizer::nextSection(Block& bl)
     }
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Block block(stok);
     bl.addSection(block);
   }
   else if (bl.getText().substr(bl.blIndex, 5) == "(set:")
@@ -171,6 +172,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Set set(stok);
     bl.addSection(set);
   }
   else if (bl.getText().substr(bl.blIndex, 7) == "(go-to:")
@@ -179,6 +181,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Goto go_to(stok);
     bl.addSection(go_to);
   }
   else if (bl.getText().substr(bl.blIndex, 4) == "(if:")
@@ -187,6 +190,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    If ifSec(stok);
     bl.addSection(ifSec);
   }
   else if (bl.getText().substr(bl.blIndex, 9) == "(else-if:")
@@ -195,6 +199,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Elseif elseif(stok);
     bl.addSection(elseif);
   }
   else if (bl.getText().substr(bl.blIndex, 6) == "(else:")
@@ -203,6 +208,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Else el(stok);
     bl.addSection(el);
   }
   else if (bl.getText().substr(bl.blIndex, 2) == "[[")
@@ -211,6 +217,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find("]]", sectionBeginning) + 2;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Link link(stok);
     bl.addSection(link);
   }
   else
@@ -232,6 +239,7 @@ void BlockTokenizer::nextSection(Block& bl)
     }
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
+    Block block(stok);
     bl.addSection(block);
   }
 }
@@ -242,47 +250,48 @@ Block::Block(SectionToken& stok) : Section(stok)
   blIndex = 2;
   BlockTokenizer btkzr;
 
-  while(btkzr.hasNextPassage(*this))
+  while(btkzr.hasNextSection(*this))
   {
-    btkzr.nextPassage(*this);
+    btkzr.nextSection(*this);
   }
 }
 
-void Block::addSection(Section* blockSect)
+void Block::addSection(Section blockSect)
 {
-  .getText().push_back(blockSect);
+  blockSections.push_back(blockSect);
 }
 
-bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName)
+void Block::startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName)
 {
   bool ifElseIfElse = true;
 
   if(gotoExists == false)
   {
-    for(int i = 0; i < .getText().size(); i++)
+    for(int i = 0; i < blockSections.size(); i++)
   	{
-  		if(.getText().at(i).getType() == GOTO)
+  		if(blockSections.at(i).getType() == GOTO)
   		{
   			gotoIndex = i;
   			gotoExists = true;
-  			passName = .getText().at(i).getPassName();
+  			passName = blockSections.at(i).getPassName();
         break;
   		}
   		else
   		{
-  			gotoIndex = .getText().at(i).getType();
+  			gotoIndex = blockSections.at(i).getType();
   		}
   	}
   }
 
   for(int i = 0; i < gotoIndex; i++)
   {
-    type_t currentType = .getText().at(i).getType();
-    string currentText = .getText().at(i).getText();
+    type_t currentType = blockSections.at(i).getType();
+    string currentText = blockSections.at(i).getText();
 
     if(currentType == SET)
     {
-      addVariable(currentText, .getText().at(i).getValue());
+      bool value = blockSections.at(i).getValue();
+      lookUpPassage[currentText] = value;
     }
     else if(currentType == TEXT)
     {
@@ -292,7 +301,7 @@ bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex,
     {
 			if(gotoExists == false)
 			{
-				passName = .getText().at(i).getPassName();
+				passName = blockSections.at(i).getPassName();
 
 	      cout << "\"" + currentText + "\"" << endl; // @suppress("Invalid overload")
 	      listOfLinks.push_back(make_pair(currentText, passName));
@@ -300,7 +309,7 @@ bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex,
     }
     else if(currentType == IF)
     {
-      if(.getText().at(i).getValueToCheck() == getVarVal(currentText))
+      if(blockSections.at(i).getValueToCheck() == lookUpPassage[currentText])
       {
         ifElseIfElse = false;
       }
@@ -311,7 +320,7 @@ bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex,
     }
     else if(currentType == ELSEIF)
     {
-      if(.getText().at(i).getValueToCheck() == getVarVal(currentText) && ifElseIfElse == true)
+      if(blockSections.at(i).getValueToCheck() == lookUpPassage[currentText] && ifElseIfElse == true)
       {
         ifElseIfElse = false;
       }
@@ -329,7 +338,7 @@ bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex,
     }
     else
     {
-			.getText().at(i).startBlock(listOfLinks, gotoIndex, gotoExists, passName);
+			blockSections.at(i).startBlock(lookUpPassage, listOfLinks, gotoIndex, gotoExists, passName);
     }
   }
 }

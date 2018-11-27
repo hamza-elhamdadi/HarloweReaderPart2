@@ -31,6 +31,10 @@ public:
 	Section(SectionToken& st);
 	string getText() const { return text; };
 	type_t getType() const { return type; };
+	virtual string getPassName(){ return ""; };
+	virtual int getValue(){ return 0; };
+	virtual int getValueToCheck(){ return 0; };
+	virtual void startBlock(){};
 };
 
 class Link : public Section
@@ -51,7 +55,7 @@ private:
 public:
 	Block(SectionToken& stok);
 	void addSection(Section blockSect);
-	void startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName);
+	void startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName);
 };
 
 class Text : public Section

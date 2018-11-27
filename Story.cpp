@@ -137,7 +137,7 @@ void Story::startPassage(int index)
     }
     else
     {
-		passages.at(index).getSec().at(i).startBlock(listOfLinks, j, gotoExists, passName);
+		passages.at(index).getSec().at(i).startBlock(lookUpPassage, listOfLinks, j, gotoExists, passName);
     }
 
   }
