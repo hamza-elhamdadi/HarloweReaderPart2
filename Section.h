@@ -32,9 +32,9 @@ public:
 	string getText() const { return text; };
 	type_t getType() const { return type; };
 	virtual string getPassName(){ return ""; };
-	virtual int getValue(){ return 0; };
-	virtual int getValueToCheck(){ return 0; };
-	virtual void startBlock(){};
+	virtual int getValue() = 0;
+	virtual int getValueToCheck() = 0;
+	virtual void startBlock() = 0;
 };
 
 class Link : public Section
