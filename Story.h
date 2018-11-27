@@ -18,7 +18,7 @@ private:
 	unordered_map<string, bool> variables;
 	unordered_map<string, int> lookUpPassage;
 public:
-	Story(string s);
+	Story(string text);
 	void addLookup(string& name, int& index);
 	void addVariable(string& varName, bool& value);
 	bool getVarVal(string& varName) const;

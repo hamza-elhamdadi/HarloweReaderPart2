@@ -7,6 +7,7 @@ SectionToken::SectionToken(string& s)
 
 Section::Section(SectionToken& st)
 {
+  secIndex = 0;
   text = st.getText();
   type = NULLTYPE;
 }
@@ -178,7 +179,7 @@ void BlockTokenizer::nextSection(Block& bl)
     bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
-    bl.addSection(goto);
+    bl.addSection(go_to);
   }
   else if (bl.getText().substr(bl.blIndex, 4) == "(if:")
   {
@@ -285,7 +286,7 @@ bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex,
     }
     else if(currentType == TEXT)
     {
-      cout << currentText << endl;
+      cout << currentText << endl; // @suppress("Invalid overload")
     }
     else if(currentType == LINK)
     {
@@ -293,7 +294,7 @@ bool Block::startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex,
 			{
 				passName = .getText().at(i).getPassName();
 
-	      cout << "\"" + currentText + "\"" << endl;
+	      cout << "\"" + currentText + "\"" << endl; // @suppress("Invalid overload")
 	      listOfLinks.push_back(make_pair(currentText, passName));
 			}
     }

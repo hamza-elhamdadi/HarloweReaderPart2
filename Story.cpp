@@ -27,7 +27,7 @@ void StoryTokenizer::nextPassage(Story& theStory)
 
 Story::Story(string text)
 {
-	theStory.storyText = text;
+	this->storyText = text;
 }
 
 
@@ -137,7 +137,7 @@ void Story::startPassage(int index)
     }
     else
     {
-			passages.at(index).getSec().at(i).startBlock(listOfLinks, j, gotoExists, passName);
+		passages.at(index).getSec().at(i).startBlock(listOfLinks, j, gotoExists, passName);
     }
 
   }
