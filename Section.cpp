@@ -261,7 +261,7 @@ void Block::addSection(Section blockSect)
   blockSections.push_back(blockSect);
 }
 
-void Block::startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName)
+void Block::startBlock(unordered_map<string, bool>& variables, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName)
 {
   bool ifElseIfElse = true;
 
@@ -291,7 +291,7 @@ void Block::startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<s
     if(currentType == SET)
     {
       bool value = blockSections.at(i).getValue();
-      lookUpPassage[currentText] = value;
+      variables[currentText] = value;
     }
     else if(currentType == TEXT)
     {
@@ -309,7 +309,7 @@ void Block::startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<s
     }
     else if(currentType == IF)
     {
-      if(blockSections.at(i).getValueToCheck() == lookUpPassage[currentText])
+      if(blockSections.at(i).getValueToCheck() == variables[currentText])
       {
         ifElseIfElse = false;
       }
@@ -320,7 +320,7 @@ void Block::startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<s
     }
     else if(currentType == ELSEIF)
     {
-      if(blockSections.at(i).getValueToCheck() == lookUpPassage[currentText] && ifElseIfElse == true)
+      if(blockSections.at(i).getValueToCheck() == variables[currentText] && ifElseIfElse == true)
       {
         ifElseIfElse = false;
       }
@@ -338,7 +338,7 @@ void Block::startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<s
     }
     else
     {
-			blockSections.at(i).startBlock(lookUpPassage, listOfLinks, gotoIndex, gotoExists, passName);
+			blockSections.at(i).startBlock(variables, listOfLinks, gotoIndex, gotoExists, passName);
     }
   }
 }

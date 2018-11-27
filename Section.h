@@ -32,9 +32,9 @@ public:
 	string getText() const { return text; };
 	type_t getType() const { return type; };
 	virtual string getPassName(){ return ""; };
-	virtual int getValue() = 0;
-	virtual int getValueToCheck() = 0;
-	virtual void startBlock() = 0;
+	virtual int getValue(){ return 0; };
+	virtual int getValueToCheck(){ return 0; };
+	virtual void startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName) {};
 };
 
 class Link : public Section
@@ -55,7 +55,7 @@ private:
 public:
 	Block(SectionToken& stok);
 	void addSection(Section blockSect);
-	void startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName);
+	void startBlock(unordered_map<string, bool>& variables, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName);
 };
 
 class Text : public Section
@@ -109,7 +109,7 @@ public:
 class BlockTokenizer
 {
 public:
-	BlockTokenizer();
+	BlockTokenizer(){};
 	bool hasNextSection(Block& bl);
 	void nextSection(Block& bl);
 };

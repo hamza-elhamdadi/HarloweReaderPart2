@@ -90,7 +90,8 @@ void Story::startPassage(int index)
 
     if(currentType == SET)
     {
-      addVariable(currentText, passages.at(index).getSec().at(i).getValue());
+			bool value = passages.at(index).getSec().at(i).getValue();
+      addVariable(currentText, value);
     }
     else if(currentType == TEXT)
     {
@@ -137,7 +138,7 @@ void Story::startPassage(int index)
     }
     else
     {
-		passages.at(index).getSec().at(i).startBlock(lookUpPassage, listOfLinks, j, gotoExists, passName);
+			passages.at(index).getSec().at(i).startBlock(variables, listOfLinks, j, gotoExists, passName);
     }
 
   }
@@ -151,7 +152,7 @@ void Story::startPassage(int index)
 
 		cin >> chosen;
 		chosen--;
-		passName = listOfLinks.at(chosen);
+		passName = listOfLinks.at(chosen).second;
 
 	}
 
