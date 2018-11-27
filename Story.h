@@ -1,10 +1,7 @@
 #ifndef STORY_H
 #define STORY_H
 
-#include <utility>
-#include <iostream>
-#include <vector>
-#include <unordered_map>
+
 #include "Passage.h"
 
 using namespace std;
@@ -16,7 +13,7 @@ private:
 	friend class Passage;
 	friend class StoryTokenizer;
 	string storyText;
-	vector<Passage*> passages;
+	vector<Passage> passages;
 	vector<pair<string, string>> listOfLinks;
 	unordered_map<string, bool> variables;
 	unordered_map<string, int> lookUpPassage;
@@ -26,7 +23,7 @@ public:
 	void addVariable(string& varName, bool& value);
 	bool getVarVal(string& varName) const;
 	int lookup(string& passName) const;
-	vector<Passage*> getPassages(int index) const{ return passages};
+	vector<Passage> getPassages(){ return passages; };
 	void startPassage(int index);
 };
 

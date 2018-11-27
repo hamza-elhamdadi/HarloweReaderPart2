@@ -3,12 +3,12 @@
 
 int main()
 {
-  string s, line;
+  string s, line, name;
 
   ifstream inFS;
   inFS.open("if.html");
 
-  getline(inFS, );
+  getline(inFS, line);
   while (!inFS.eof() && line != "</html>")
   {
     s += line + '\n';
@@ -16,15 +16,14 @@ int main()
   }
 
   Story st(s);
-  Passage* p;
   int count = 0;
 
   StoryTokenizer storyTok;
   while(storyTok.hasNextPassage(st))
   {
     storyTok.nextPassage(st);
-    *p = st.getPassages().at(count);
-    st.addLookup(*p.getText(), count);
+    name = st.getPassages().at(count).getName();
+    st.addLookup(name, count);
     count++;
   }
 

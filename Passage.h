@@ -1,8 +1,6 @@
 #ifndef PASSAGE_H
 #define PASSAGE_H
 
-#include <string>
-#include <vector>
 #include "Section.h"
 
 using namespace std;
@@ -19,12 +17,12 @@ class Passage {
 	friend class PassageTokenizer;
 private:
 	string name;
-	vector<Section*> sections;
+	vector<Section> sections;
 	int ptIndex;
 public:
 	Passage(PassageToken& pt);
 	string getName() const{ return name; };
-	vector<Section*> getSec() const{ return sections; };
+	vector<Section> getSec(){ return sections; };
 };
 
 class PassageTokenizer /* Creates sectiontokens */{

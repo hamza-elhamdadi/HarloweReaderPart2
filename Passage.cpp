@@ -58,6 +58,7 @@ bool PassageTokenizer::hasNextSection(Passage& pass)
 void PassageTokenizer::nextSection(Passage& pass)
 {
   int sectionBeginning;
+  string ptokenText;
   pass.ptIndex = passageText.find(">") + 1;
 
   //test to see if the next section is a Text Section.
@@ -77,9 +78,10 @@ void PassageTokenizer::nextSection(Passage& pass)
     {
       pass.ptIndex = passageText.find("[", pass.ptIndex);
     }
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Text text(stok);
-    sections.push_back(&text);
+    pass.sections.push_back(text);
   }
   else if(passageText.substr(pass.ptIndex, 3) == "[[[")
   {
@@ -95,57 +97,64 @@ void PassageTokenizer::nextSection(Passage& pass)
       }
       pass.ptIndex++;
     }
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Block block(stok);
-    sections.push_back(&block);
+    pass.sections.push_back(block);
   }
   else if (passageText.substr(pass.ptIndex, 5) == "(set:")
   {
     sectionBeginning = passageText.find("(set:", pass.ptIndex);
     pass.ptIndex = passageText.find(")", sectionBeginning) + 1;
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Set set(stok);
-    sections.push_back(&set);
+    pass.sections.push_back(set);
   }
   else if (passageText.substr(pass.ptIndex, 7) == "(go-to:")
   {
     sectionBeginning = passageText.find("(go-to:", pass.ptIndex);
     pass.ptIndex = passageText.find(")", sectionBeginning) + 1;
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
-    Goto goto(stok);
-    sections.push_back(&goto);
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
+    Goto tgoto(stok);
+    pass.sections.push_back(tgoto);
   }
   else if (passageText.substr(pass.ptIndex, 4) == "(if:")
   {
     sectionBeginning = passageText.find("(if:", pass.ptIndex);
     pass.ptIndex = passageText.find(")", sectionBeginning) + 1;
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     If ifSec(stok);
-    sections.push_back(&ifSec);
+    pass.sections.push_back(ifSec);
   }
   else if (passageText.substr(pass.ptIndex, 9) == "(else-if:")
   {
     sectionBeginning = passageText.find("(else-if:", pass.ptIndex);
     pass.ptIndex = passageText.find(")", sectionBeginning) + 1;
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Elseif elseif(stok);
-    sections.push_back(&elseif);
+    pass.sections.push_back(elseif);
   }
   else if (passageText.substr(pass.ptIndex, 6) == "(else:")
   {
     sectionBeginning = passageText.find("(else:", pass.ptIndex);
     pass.ptIndex = passageText.find(")", sectionBeginning) + 1;
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Else el(stok);
-    sections.push_back(&el);
+    pass.sections.push_back(el);
   }
   else if (passageText.substr(pass.ptIndex, 2) == "[[")
   {
     sectionBeginning = passageText.find("[[", pass.ptIndex);
     pass.ptIndex = passageText.find("]]", sectionBeginning) + 2;
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning));
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Link link(stok);
-    sections.push_back(&link);
+    pass.sections.push_back(link);
   }
   else
   {
@@ -164,8 +173,9 @@ void PassageTokenizer::nextSection(Passage& pass)
       }
       pass.ptIndex++;
     }
-    SectionToken stok(passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning), BLOCK);
+    ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
+    SectionToken stok(ptokenText);
     Block block(stok);
-    sections.push_back(&block);
+    pass.sections.push_back(block);
   }
 }

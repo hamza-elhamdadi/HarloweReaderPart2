@@ -1,6 +1,10 @@
 #ifndef SECTION_H
 #define SECTION_H
 
+#include <utility>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 #include <string>
 
 using namespace std;
@@ -40,12 +44,13 @@ public:
 
 class Block : public Section
 {
+	friend class BlockTokenizer;
 private:
-	vector<Section*> blockSections;
+	vector<Section> blockSections;
 	int blIndex;
 public:
 	Block(SectionToken& stok);
-	void addSection(Section* blockSect);
+	void addSection(Section blockSect);
 	void startBlock(vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName);
 };
 
@@ -79,7 +84,7 @@ private:
 	bool valueToCheck;
 public:
 	If(SectionToken& stok);
-	bool getValueToCheck() const { return value; };
+	bool getValueToCheck() const { return valueToCheck; };
 };
 
 class Elseif : public Section
@@ -88,7 +93,7 @@ private:
 	bool valueToCheck;
 public:
 	Elseif(SectionToken& stok);
-	bool getValueToCheck() const { return value; };
+	bool getValueToCheck() const { return valueToCheck; };
 };
 
 class Else : public Section
@@ -103,6 +108,6 @@ public:
 	BlockTokenizer();
 	bool hasNextSection(Block& bl);
 	void nextSection(Block& bl);
-}
+};
 
 #endif

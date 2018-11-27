@@ -20,7 +20,7 @@ void StoryTokenizer::nextPassage(Story& theStory)
 	PassageToken ptok(theStory.storyText.substr(passageBeginning, index - passageBeginning));
 	Passage p(ptok);
 
-	theStory.passages.push_back(&p);
+	theStory.passages.push_back(p);
 }
 
 
