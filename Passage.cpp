@@ -2,16 +2,19 @@
 
 Passage::Passage(PassageToken& pt)
 {
+  ptIndex = 0;
+
   int passageNameBeginning = pt.getText().find("name=", ptIndex) + 6;
   ptIndex = pt.getText().find("\"", passageNameBeginning);
 
-  name = pt.getText().substr(passageNameBeginning, ptIndex);
+  name = pt.getText().substr(passageNameBeginning, ptIndex - passageNameBeginning);
 
   string passageText = pt.getText();
-  PassageTokenizer ptkzr(passageText);
+  PassageTokenizer ptkzr(passageText, *this);
 
   while(ptkzr.hasNextSection(*this))
   {
+    //infinite loop
     ptkzr.nextSection(*this);
   }
 
@@ -22,32 +25,15 @@ PassageToken::PassageToken(string s)
   passageText = s;
 }
 
-PassageTokenizer::PassageTokenizer(string& text)
+PassageTokenizer::PassageTokenizer(string& text, Passage& pass)
 {
   passageText = text;
+  pass.ptIndex = passageText.find(">") + 1;
 }
 
 bool PassageTokenizer::hasNextSection(Passage& pass)
 {
-  if (passageText.find("(set:", pass.ptIndex) != string::npos) {
-		return true;
-	}
-	else if (passageText.find("(go-to:", pass.ptIndex) != string::npos) {
-		return true;
-	}
-	else if (passageText.find("(if:", pass.ptIndex) != string::npos) {
-		return true;
-	}
-	else if (passageText.find("(else-if:", pass.ptIndex) != string::npos) {
-		return true;
-	}
-	else if (passageText.find("(else:", pass.ptIndex) != string::npos) {
-		return true;
-	}
-	else if (passageText.find("[[", pass.ptIndex) != string::npos) {
-		return true;
-	}
-	else if (passageText.substr(pass.ptIndex, 1) != "<") {
+  if (passageText.substr(pass.ptIndex, 1) != "<") {
 		return true;
 	}
 	else {
@@ -57,27 +43,21 @@ bool PassageTokenizer::hasNextSection(Passage& pass)
 
 void PassageTokenizer::nextSection(Passage& pass)
 {
-  int sectionBeginning;
+  unsigned int sectionBeginning, sectionEnding;
   string ptokenText;
-  pass.ptIndex = passageText.find(">") + 1;
+
+  while(passageText.substr(pass.ptIndex, 1) == "\n")
+  {
+    pass.ptIndex++;
+  }
 
   //test to see if the next section is a Text Section.
   if ((passageText.substr(pass.ptIndex, 1) != "(") && (passageText.substr(pass.ptIndex, 1) != "["))
   {
     sectionBeginning = pass.ptIndex;
 
-    if ((passageText.find("(", pass.ptIndex) == string::npos) && (passageText.find("[", pass.ptIndex) == string::npos))
-    {
-      pass.ptIndex = passageText.find("<", pass.ptIndex);
-    }
-    else if (passageText.find("(", pass.ptIndex) < passageText.find("[", pass.ptIndex))
-    {
-      pass.ptIndex = passageText.find("(", pass.ptIndex);
-    }
-    else
-    {
-      pass.ptIndex = passageText.find("[", pass.ptIndex);
-    }
+    textCheck(pass);
+
     ptokenText = passageText.substr(sectionBeginning, pass.ptIndex - sectionBeginning);
     SectionToken stok(ptokenText);
     Text text(stok);
@@ -177,5 +157,26 @@ void PassageTokenizer::nextSection(Passage& pass)
     SectionToken stok(ptokenText);
     Block block(stok);
     pass.sections.push_back(block);
+  }
+}
+
+void PassageTokenizer::textCheck(Passage& pass)
+{
+  if ((passageText.find("(", pass.ptIndex) == string::npos) && (passageText.find("[", pass.ptIndex) == string::npos))
+  {
+    pass.ptIndex = passageText.find("<", pass.ptIndex);
+  }
+  else if (passageText.find("(", pass.ptIndex) < passageText.find("[", pass.ptIndex))
+  {
+    pass.ptIndex = passageText.find("(", pass.ptIndex);
+    if((passageText.substr(pass.ptIndex, 7) != "(go-to:") && (passageText.substr(pass.ptIndex, 5) != "(set:") && (passageText.substr(pass.ptIndex, 4) != "(if:") && (passageText.substr(pass.ptIndex, 9) != "(else-if:") && (passageText.substr(pass.ptIndex, 6) != "(else:"))
+    {
+      pass.ptIndex = passageText.find(")", pass.ptIndex) + 1;
+      textCheck(pass);
+    }
+  }
+  else
+  {
+    pass.ptIndex = passageText.find("[", pass.ptIndex);
   }
 }

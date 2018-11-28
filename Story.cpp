@@ -2,12 +2,7 @@
 
 bool StoryTokenizer::hasNextPassage(Story& theStory)
 {
-	if (theStory.storyText.find("<tw-passagedata ", index) == string::npos) {
-		return false;
-	}
-	else {
-		return true;
-	}
+	return theStory.storyText.find("<tw-passagedata ", index) != string::npos;
 }
 
 void StoryTokenizer::nextPassage(Story& theStory)
@@ -27,7 +22,7 @@ void StoryTokenizer::nextPassage(Story& theStory)
 
 Story::Story(string text)
 {
-	this->storyText = text;
+	storyText = text;
 }
 
 
@@ -103,6 +98,8 @@ void Story::startPassage(int index)
 			{
 				passName = passages.at(index).getSec().at(i).getPassName();
 
+				cout << currentText << endl << passages.at(index).getSec().at(i).getPassName() << endl;
+
 	      cout << "\"" + currentText + "\"" << endl;
 	      listOfLinks.push_back(make_pair(currentText, passName));
 			}
@@ -152,6 +149,10 @@ void Story::startPassage(int index)
 
 		cin >> chosen;
 		chosen--;
+		/*for(int i = 0; i < listOfLinks.size(); i++)
+		{
+			cout << listOfLinks.at(i).second << endl;
+		}*/
 		passName = listOfLinks.at(chosen).second;
 
 	}

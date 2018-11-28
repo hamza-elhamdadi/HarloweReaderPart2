@@ -5,20 +5,12 @@ SectionToken::SectionToken(string& s)
   sectionText = s;
 }
 
-Section::Section(SectionToken& st)
-{
-  secIndex = 0;
-  text = st.getText();
-  type = NULLTYPE;
-}
-
 Link::Link(SectionToken& stok) : Section(stok)
 {
-  secIndex = 0;
   type = LINK;
-  if(stok.getText().find("-&gt;", secIndex) != string::npos)
+  if(stok.getText().find(LINK_SEPARATOR, secIndex) != string::npos)
   {
-    secIndex = stok.getText().find("-&gt;", secIndex);
+    secIndex = stok.getText().find(LINK_SEPARATOR, secIndex) + 5;
     text = stok.getText().substr(2, secIndex - 2);
     secIndex += 5;
     passName = stok.getText().substr(secIndex, stok.getText().length() - secIndex - 2);
@@ -36,14 +28,14 @@ Text::Text(SectionToken& stok) : Section(stok)
 
 Goto::Goto(SectionToken& stok) : Section(stok)
 {
-  secIndex = stok.getText().find("&quot;") + 6;
+  secIndex = stok.getText().find(GOTO_NAME_START, secIndex) + 6;
   type = GOTO;
-  passName = stok.getText().substr(secIndex, stok.getText().find("&quot;", secIndex) - secIndex);
+  passName = stok.getText().substr(secIndex, stok.getText().find(GOTO_NAME_END, secIndex) - secIndex);
 }
 
 Set::Set(SectionToken& stok) : Section(stok)
 {
-  secIndex = stok.getText().find("$") + 1;
+  secIndex = stok.getText().find(VARIABLE_START) + 1;
   type = SET;
   text = stok.getText().substr(secIndex, stok.getText().find(" to ", secIndex) - secIndex);
 
@@ -96,22 +88,22 @@ bool BlockTokenizer::hasNextSection(Block& bl)
   if (bl.getText().find("(set:", bl.blIndex) != string::npos) {
 		return true;
 	}
-	else if (bl.getText().find("(go-to:", bl.blIndex) != string::npos) {
+	else if (bl.getText().find(GOTO_START, bl.blIndex) != string::npos) {
 		return true;
 	}
-	else if (bl.getText().find("(if:", bl.blIndex) != string::npos) {
+	else if (bl.getText().find(IF_START, bl.blIndex) != string::npos) {
 		return true;
 	}
-	else if (bl.getText().find("(else-if:", bl.blIndex) != string::npos) {
+	else if (bl.getText().find(ELSEIF_START, bl.blIndex) != string::npos) {
 		return true;
 	}
-	else if (bl.getText().find("(else:", bl.blIndex) != string::npos) {
+	else if (bl.getText().find(ELSE_START, bl.blIndex) != string::npos) {
 		return true;
 	}
-	else if (bl.getText().find("[[", bl.blIndex) != string::npos) {
+	else if (bl.getText().find(LINK_START, bl.blIndex) != string::npos) {
 		return true;
 	}
-	else if (bl.getText().substr(bl.blIndex, 1) != "<") {
+	else if (bl.getText().substr(bl.blIndex, 1) != "]") {
 		return true;
 	}
 	else {
@@ -123,24 +115,28 @@ void BlockTokenizer::nextSection(Block& bl)
 {
   int sectionBeginning;
   string stokenText;
-  bl.blIndex += 2;
+
+  while(bl.getText().substr(bl.blIndex, 1) == "\n")
+  {
+    bl.blIndex++;
+  }
 
   //test to see if the next section is a Text Section.
-  if ((bl.getText().substr(bl.blIndex, 1) != "(") && (bl.getText().substr(bl.blIndex, 1) != "["))
+  if ((bl.getText().substr(bl.blIndex, 1) != "(") && (bl.getText().substr(bl.blIndex, 1) != BLOCK_START))
   {
     sectionBeginning = bl.blIndex;
 
-    if ((bl.getText().find("(", bl.blIndex) == string::npos) && (bl.getText().find("[", bl.blIndex) == string::npos))
+    if ((bl.getText().find("(", bl.blIndex) == string::npos) && (bl.getText().find(BLOCK_START, bl.blIndex) == string::npos))
     {
-      bl.blIndex = bl.getText().find("<", bl.blIndex);
+      bl.blIndex = bl.getText().find("]", bl.blIndex);
     }
-    else if (bl.getText().find("(", bl.blIndex) < bl.getText().find("[", bl.blIndex))
+    else if (bl.getText().find("(", bl.blIndex) < bl.getText().find(BLOCK_START, bl.blIndex))
     {
       bl.blIndex = bl.getText().find("(", bl.blIndex);
     }
     else
     {
-      bl.blIndex = bl.getText().find("[", bl.blIndex);
+      bl.blIndex = bl.getText().find(BLOCK_START, bl.blIndex);
     }
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
@@ -169,52 +165,52 @@ void BlockTokenizer::nextSection(Block& bl)
   else if (bl.getText().substr(bl.blIndex, 5) == "(set:")
   {
     sectionBeginning = bl.getText().find("(set:", bl.blIndex);
-    bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
+    bl.blIndex = bl.getText().find(COMMAND_END, sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
     Set set(stok);
     bl.addSection(set);
   }
-  else if (bl.getText().substr(bl.blIndex, 7) == "(go-to:")
+  else if (bl.getText().substr(bl.blIndex, 7) == GOTO_START)
   {
-    sectionBeginning = bl.getText().find("(go-to:", bl.blIndex);
-    bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
+    sectionBeginning = bl.getText().find(GOTO_START, bl.blIndex);
+    bl.blIndex = bl.getText().find(COMMAND_END, sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
     Goto go_to(stok);
     bl.addSection(go_to);
   }
-  else if (bl.getText().substr(bl.blIndex, 4) == "(if:")
+  else if (bl.getText().substr(bl.blIndex, 4) == IF_START)
   {
-    sectionBeginning = bl.getText().find("(if:", bl.blIndex);
-    bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
+    sectionBeginning = bl.getText().find(IF_START, bl.blIndex);
+    bl.blIndex = bl.getText().find(COMMAND_END, sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
     If ifSec(stok);
     bl.addSection(ifSec);
   }
-  else if (bl.getText().substr(bl.blIndex, 9) == "(else-if:")
+  else if (bl.getText().substr(bl.blIndex, 9) == ELSEIF_START)
   {
-    sectionBeginning = bl.getText().find("(else-if:", bl.blIndex);
-    bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
+    sectionBeginning = bl.getText().find(ELSEIF_START, bl.blIndex);
+    bl.blIndex = bl.getText().find(COMMAND_END, sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
     Elseif elseif(stok);
     bl.addSection(elseif);
   }
-  else if (bl.getText().substr(bl.blIndex, 6) == "(else:")
+  else if (bl.getText().substr(bl.blIndex, 6) == ELSE_START)
   {
-    sectionBeginning = bl.getText().find("(else:", bl.blIndex);
-    bl.blIndex = bl.getText().find(")", sectionBeginning) + 1;
+    sectionBeginning = bl.getText().find(ELSE_START, bl.blIndex);
+    bl.blIndex = bl.getText().find(COMMAND_END, sectionBeginning) + 1;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
     Else el(stok);
     bl.addSection(el);
   }
-  else if (bl.getText().substr(bl.blIndex, 2) == "[[")
+  else if (bl.getText().substr(bl.blIndex, 2) == LINK_START)
   {
-    sectionBeginning = bl.getText().find("[[", bl.blIndex);
-    bl.blIndex = bl.getText().find("]]", sectionBeginning) + 2;
+    sectionBeginning = bl.getText().find(LINK_START, bl.blIndex);
+    bl.blIndex = bl.getText().find(LINK_END, sectionBeginning) + 2;
     stokenText = bl.getText().substr(sectionBeginning, bl.blIndex - sectionBeginning);
     SectionToken stok(stokenText);
     Link link(stok);

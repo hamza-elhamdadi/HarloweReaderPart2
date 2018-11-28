@@ -29,9 +29,11 @@ class PassageTokenizer /* Creates sectiontokens */{
 private:
 	string passageText;
 public:
-	PassageTokenizer(string& passageText);
+	PassageTokenizer(string& passageText, Passage& pass);
 	bool hasNextSection(Passage& pass);
+	void textCheck(Passage& pass);
 	void nextSection(Passage& pass); // determines what type of section is next and then creates that section class and pushes it back to the vector of sections
+
 };
 
 #endif

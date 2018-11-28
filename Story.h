@@ -31,7 +31,7 @@ class StoryTokenizer /* Takes in story text, creates passage tokens */{
 private:
 	int index;
 public:
-	StoryTokenizer(){};
+	StoryTokenizer() : index(0) {};
 	bool hasNextPassage(Story& theStory);
 	void nextPassage(Story& theStory);
 };

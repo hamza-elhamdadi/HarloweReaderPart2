@@ -9,9 +9,9 @@ int main()
   inFS.open("if.html");
 
   getline(inFS, line);
-  while (!inFS.eof() && line != "</html>")
+  while (line != "</html>")
   {
-    s += line + '\n';
+    s = s + line + '\n';
     getline(inFS, line);
   }
 
@@ -19,6 +19,7 @@ int main()
   int count = 0;
 
   StoryTokenizer storyTok;
+
   while(storyTok.hasNextPassage(st))
   {
     storyTok.nextPassage(st);
