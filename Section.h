@@ -51,7 +51,7 @@ public:
 	Section(SectionToken& st) : secIndex(0), text(st.getText()), type(NULLTYPE) {};
 	string getText() const { return text; };
 	type_t getType() const { return type; };
-	virtual string getPassName(){ return ""; };
+	virtual string getPassName(){ return text; };
 	virtual int getValue(){ return 0; };
 	virtual int getValueToCheck(){ return 0; };
 	virtual void startBlock(unordered_map<string, bool>& lookUpPassage, vector<pair<string, string>>& listOfLinks, int gotoIndex, bool& gotoExists, string& passName) {};

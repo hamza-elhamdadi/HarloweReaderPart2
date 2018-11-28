@@ -29,14 +29,14 @@ Story::Story(string text)
 
 void Story::addLookup(string& name, int& index)
 {
-	variables[name] = index;
+	lookUpPassage[name] = index;
 }
 
 
 
 void Story::addVariable(string& varName, bool& value)
 {
-	lookUpPassage[varName] = value;
+	variables[varName] = value;
 }
 
 
@@ -50,7 +50,7 @@ bool Story::getVarVal(string& varName) const
 
 int Story::lookup(string& passName) const
 {
-	return lookUpPassage.at(passName);
+	return lookUpPassage.find(passName)->second;
 }
 
 
@@ -62,6 +62,8 @@ void Story::startPassage(int index)
 	int j, chosen;
 	string passName;
 
+	listOfLinks.clear();
+
 	for(int i = 0; i < passages.at(index).getSec().size(); i++)
 	{
 		if(passages.at(index).getSec().at(i).getType() == GOTO)
@@ -71,17 +73,17 @@ void Story::startPassage(int index)
 			passName = passages.at(index).getSec().at(i).getPassName();
 			break;
 		}
-		else
-		{
-			j = passages.at(index).getSec().at(i).getType();
-		}
+	}
+
+	if(gotoExists == false)
+	{
+		j = passages.at(index).getSec().size();
 	}
 
   for(int i = 0; i < j; i++)
   {
     type_t currentType = passages.at(index).getSec().at(i).getType();
     string currentText = passages.at(index).getSec().at(i).getText();
-
 
     if(currentType == SET)
     {
@@ -97,9 +99,6 @@ void Story::startPassage(int index)
 			if(gotoExists == false)
 			{
 				passName = passages.at(index).getSec().at(i).getPassName();
-
-				cout << currentText << endl << passages.at(index).getSec().at(i).getPassName() << endl;
-
 	      cout << "\"" + currentText + "\"" << endl;
 	      listOfLinks.push_back(make_pair(currentText, passName));
 			}
@@ -149,10 +148,6 @@ void Story::startPassage(int index)
 
 		cin >> chosen;
 		chosen--;
-		/*for(int i = 0; i < listOfLinks.size(); i++)
-		{
-			cout << listOfLinks.at(i).second << endl;
-		}*/
 		passName = listOfLinks.at(chosen).second;
 
 	}
